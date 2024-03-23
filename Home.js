@@ -30,7 +30,7 @@ const Home = () => {
   const [Timer, setTimer] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const navigation = useNavigation();
 
@@ -79,7 +79,8 @@ const Home = () => {
       const timer = setInterval(() => {
         if (minutes === 0 && seconds === 0) {
           clearInterval(timer);
-          // You can add additional logic here for when the timer reaches 0
+          setTimerActive(false);
+          //   setTimer(0);
           return;
         }
 
@@ -100,16 +101,26 @@ const Home = () => {
   const displaySeconds = seconds < 10 ? `0${seconds}` : seconds;
 
   const handleToggleTimer = () => {
-    if (timerActive) {
+    if (timerActive2) {
       setTimerActive2(false);
       setTimerActive(false); // Stop the timer
       setTimer(0); // Reset the timer to 0
+      setMinutes(0);
+      setSeconds(0);
       update(ref(db), { Total: 0 }); // Reset Total value in the database
       update(ref(db), { Fouls: 0 }); // Reset Fouls value in the database
     } else {
       setTimerActive(true); // Start the timer
       setTimerActive2(true);
     }
+  };
+
+  const handleTimer = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const handleSet = () => {
+    setModalVisible(!modalVisible);
   };
 
   //   const handleStartTimer = () => {
@@ -148,11 +159,11 @@ const Home = () => {
           </View>
         </View>
         <View style={styles.box2}>
-          <View style={styles.clock}>
+          <TouchableOpacity style={styles.clock} onPress={handleTimer}>
             <Text style={styles.clockText}>
               {displayMinutes} : {displaySeconds}
             </Text>
-          </View>
+          </TouchableOpacity>
           {/* ///    Left  */}
           <View
             style={{
@@ -190,8 +201,14 @@ const Home = () => {
             <Text style={styles.ShotClockText}>{Timer}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.box3} onPress={handleToggleTimer}>
-          <Text style={styles.ResetText}>{timerActive ? "Stop" : "Start"}</Text>
+        <TouchableOpacity
+          style={styles.box3}
+          onPress={handleToggleTimer}
+          disabled={timerActive2 === false && minutes < 1 && seconds < 1}
+        >
+          <Text style={styles.ResetText}>
+            {timerActive2 ? "Reset" : "Start"}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -199,10 +216,8 @@ const Home = () => {
       <Modal
         animationType="fade"
         transparent={true}
-        // visible={modalVisible}
-        // onRequestClose={() => {
-        //   setModalVisible(!modalVisible);
-        // }}
+        visible={modalVisible}
+        onTouchEnd={() => setModalVisible(!modalVisible)}
       >
         <View
           style={styles.centeredView}
@@ -212,7 +227,6 @@ const Home = () => {
             <View
               style={{
                 flexDirection: "colum",
-                justifyContent: "center",
                 alignItems: "center",
               }}
             >
@@ -246,16 +260,19 @@ const Home = () => {
                   style={styles.TextBox}
                   keyboardType="numeric"
                   onChangeText={(text) => {
-                    const newMinutes = parseInt(text);
-                    if (!isNaN(newMinutes)) {
-                      setMinutes(newMinutes);
+                    const newSeconds = parseInt(text);
+                    if (!isNaN(newSeconds)) {
+                      setSeconds(newSeconds);
                     } else {
-                      setMinutes(0);
+                      setSeconds(0);
                     }
                   }}
                   placeholder="0"
                 />
               </View>
+              <TouchableOpacity style={styles.button} onPress={handleSet}>
+                <Text style={styles.buttonText}>Set</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -447,30 +464,53 @@ const styles = ScaledSheet.create({
   },
   modalView: {
     flexDirection: "row",
-    height: "20%",
-    width: "80%",
+    height: 200,
+    width: "65%",
     overflow: "hidden",
     borderRadius: 20,
     backgroundColor: "white",
     borderWidth: 1.5,
     borderColor: "white",
-    alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
+    paddingTop: 20,
   },
 
   ModelText: {
-    paddingBottom: 20,
+    marginBottom: 20,
     fontSize: "20@mvs",
     fontFamily: "Inter_500Medium",
     color: "#595959",
   },
 
   TextBox: {
-    width: 90,
+    width: 50,
     height: 40,
     borderColor: "gray",
     borderWidth: 1,
-    paddingLeft: 13,
-    marginBottom: 20, // Add marginBottom for spacing
+    paddingLeft: 22,
+    borderRadius: 10,
+  },
+
+  ModelText2: {
+    fontSize: "30@mvs",
+    fontFamily: "Inter_800ExtraBold",
+    color: "#595959",
+    marginHorizontal: 10,
+  },
+
+  button: {
+    marginTop: 30,
+    width: 100,
+    height: 40,
+    backgroundColor: "#FC4E4E",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  buttonText: {
+    fontSize: "20@mvs",
+    fontFamily: "Inter_500Medium",
+    color: "#fff",
   },
 });

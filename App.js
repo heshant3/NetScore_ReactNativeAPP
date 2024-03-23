@@ -10,6 +10,7 @@ import {
   Inter_300Light,
   Inter_400Regular,
   Inter_500Medium,
+  Inter_800ExtraBold,
 } from "@expo-google-fonts/inter";
 
 SplashScreen.preventAutoHideAsync();
@@ -20,6 +21,7 @@ export default function App() {
     Inter_300Light,
     Inter_400Regular,
     Inter_500Medium,
+    Inter_800ExtraBold,
   });
 
   const [isConnected, setIsConnected] = useState(true);
