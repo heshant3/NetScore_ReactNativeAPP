@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "NetScore",
+    "name": "Net Score",
     "slug": "NetScore",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,10 +21,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.vilupule.NetScore"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d5f2b939-ab74-47e3-b522-d584e4ed37a4"
+      }
     }
   }
 }
