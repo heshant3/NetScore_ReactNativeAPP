@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Vibration,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -17,8 +18,9 @@ import {
   FontAwesome6,
 } from "@expo/vector-icons";
 import { ScaledSheet } from "react-native-size-matters";
-import { ref, onValue, update } from "firebase/database";
+import { ref, onValue, update, push } from "firebase/database";
 import { db } from "./config";
+import * as Haptics from "expo-haptics";
 
 const Home = () => {
   const [Humidity, setHumidity] = useState(null);
@@ -103,19 +105,51 @@ const Home = () => {
   const handleToggleTimer = () => {
     if (timerActive2) {
       setTimerActive2(false);
-      setTimerActive(false); // Stop the timer
-      setTimer(0); // Reset the timer to 0
+      setTimerActive(false);
+      setTimer(0);
       setMinutes(0);
       setSeconds(0);
-      update(ref(db), { Total: 0 }); // Reset Total value in the database
-      update(ref(db), { Fouls: 0 }); // Reset Fouls value in the database
+      update(ref(db), { Total: 0 });
+      update(ref(db), { Fouls: 0 });
     } else {
-      setTimerActive(true); // Start the timer
+      setTimerActive(true);
       setTimerActive2(true);
     }
   };
 
+  // Inside your component function
+  const handleOkPress = () => {
+    const HistoryRef = ref(db, "History"); // Assuming 'penalties' is your Firebase database reference
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    // Get the current date
+    const currentDate = new Date().toISOString().slice(0, 10);
+
+    // Create an object with the desired key-value pairs, including the current date
+    const History = {
+      Date: currentDate,
+      Fouls: Fouls,
+      Total: Total,
+      // Add any other data you want to send
+    };
+
+    // Push data to Firebase with a unique ID
+    push(HistoryRef, History)
+      .then((newRef) => {
+        console.log("Data added with ID: ", newRef.key);
+        // Reset states after data is sent
+        // setFouls(0);
+        // setTotal(0);
+
+        alert("Data submitted successfully!");
+      })
+      .catch((error) => {
+        console.error("Error adding data: ", error);
+      });
+  };
+
   const handleTimer = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setModalVisible(!modalVisible);
   };
 
@@ -159,7 +193,7 @@ const Home = () => {
           </View>
         </View>
         <View style={styles.box2}>
-          <TouchableOpacity style={styles.clock} onPress={handleTimer}>
+          <TouchableOpacity style={styles.clock} onLongPress={handleTimer}>
             <Text style={styles.clockText}>
               {displayMinutes} : {displaySeconds}
             </Text>
@@ -201,18 +235,39 @@ const Home = () => {
             <Text style={styles.ShotClockText}>{Timer}</Text>
           </View>
         </View>
+
+        {/* //        Button  */}
         <TouchableOpacity
-          style={styles.box3}
+          style={[
+            styles.box3,
+            timerActive2 === false && minutes < 1 && seconds < 1
+              ? styles.disabledButton
+              : null,
+          ]}
           onPress={handleToggleTimer}
+          onLongPress={handleOkPress}
           disabled={timerActive2 === false && minutes < 1 && seconds < 1}
         >
           <Text style={styles.ResetText}>
             {timerActive2 ? "Reset" : "Start"}
           </Text>
         </TouchableOpacity>
+
+        {/* <TouchableOpacity
+          style={[
+            styles.box3,
+            Total < 1 && minutes < 1 && seconds < 1
+              ? styles.disabledButton
+              : null,
+          ]}
+          onPress={handleOkPress}
+          // disabled={minutes > 0 && seconds > 0}
+        >
+          <Text style={styles.ResetText}>Update</Text>
+        </TouchableOpacity> */}
       </View>
 
-      {/* Modal */}
+      {/* Set Timer Modal */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -448,6 +503,10 @@ const styles = ScaledSheet.create({
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  disabledButton: {
+    display: "none",
   },
 
   ResetText: {
