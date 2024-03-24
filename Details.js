@@ -12,6 +12,19 @@ import { ref, onValue, update, push } from "firebase/database";
 import { db } from "./config";
 
 export default function Details() {
+  const [HistoryData, setHistoryData] = useState([]);
+
+  useEffect(() => {
+    const HistoryRef = ref(db, "History");
+    onValue(HistoryRef, (snapshot) => {
+      const firebaseData = snapshot.val();
+      if (firebaseData) {
+        const HistoryArray = Object.values(firebaseData);
+        setHistoryData(HistoryArray.reverse()); // Reverse the order of the array
+      }
+    });
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fdf5ea" }}>
       <StatusBar barStyle="dark-content" backgroundColor="#fdf5ea" />
@@ -23,26 +36,34 @@ export default function Details() {
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.Box}>
-            <Text style={styles.BoxHeadText}>Game Details</Text>
-            <Text style={styles.BoxDateText}>2024/10/16</Text>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <View style={{ flex: 1, alignItems: "center" }}>
-                <Text>Team 1</Text>
-                <Text>100</Text>
+          {HistoryData.sort((a, b) => new Date(b.Date) - new Date(a.Date)) // Sort by date in descending order
+            .map((game, index) => (
+              <View style={styles.Box} key={index}>
+                <Text style={styles.BoxHeadText}>Game Details</Text>
+                <Text style={styles.BoxDateText}>{game.Date}</Text>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    paddingTop: 10,
+                  }}
+                >
+                  <View style={{ flex: 1, alignItems: "center" }}>
+                    <Text style={styles.TeamText}>Team 1</Text>
+                    <Text style={styles.TeamTotalText}>{game.Total}</Text>
+                    <Text style={styles.TeamFoulsTextName}>Fouls</Text>
+                    <Text style={styles.TeamFoulsText}>{game.Fouls}</Text>
+                  </View>
+                  <View style={{ flex: 1, alignItems: "center" }}>
+                    <Text style={styles.TeamText}>Team 2</Text>
+                    <Text style={styles.TeamTotalText}>0</Text>
+                    <Text style={styles.TeamFoulsTextName}>Fouls</Text>
+                    <Text style={styles.TeamFoulsText}>0</Text>
+                  </View>
+                </View>
               </View>
-              <View style={{ flex: 1, alignItems: "center" }}>
-                <Text>Team 2</Text>
-                <Text>100</Text>
-              </View>
-            </View>
-          </View>
+            ))}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -69,6 +90,7 @@ const styles = ScaledSheet.create({
 
   Box: {
     marginTop: 10,
+    marginBottom: 10,
     width: "280@vs",
     height: 200,
     borderRadius: 20,
@@ -86,7 +108,36 @@ const styles = ScaledSheet.create({
 
   BoxDateText: {
     fontSize: "16@mvs",
+    fontFamily: "Inter_400Regular",
+    color: "#595959",
+  },
+
+  TeamText: {
+    alignItems: "center",
+    fontSize: "16@mvs",
     fontFamily: "Inter_500Medium",
     color: "#595959",
+  },
+
+  TeamTotalText: {
+    alignItems: "center",
+    fontSize: "27@mvs",
+    fontFamily: "Inter_600SemiBold",
+    color: "#000",
+  },
+
+  TeamFoulsTextName: {
+    marginTop: 10,
+    alignItems: "center",
+    fontSize: "15@mvs",
+    fontFamily: "Inter_400Regular",
+    color: "#595959",
+  },
+
+  TeamFoulsText: {
+    alignItems: "center",
+    fontSize: "20@mvs",
+    fontFamily: "Inter_600SemiBold",
+    color: "#000",
   },
 });

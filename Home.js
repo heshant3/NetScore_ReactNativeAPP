@@ -7,16 +7,11 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Vibration,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Entypo,
-  Ionicons,
-  FontAwesome5,
-  FontAwesome6,
-} from "@expo/vector-icons";
+import { Entypo, Ionicons, FontAwesome6 } from "@expo/vector-icons";
 import { ScaledSheet } from "react-native-size-matters";
 import { ref, onValue, update, push } from "firebase/database";
 import { db } from "./config";
@@ -33,6 +28,7 @@ const Home = () => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
 
@@ -49,6 +45,7 @@ const Home = () => {
       if (data && typeof data === "object" && "Temperature" in data) {
         setTemperature(data.Temperature);
       }
+      setLoading(false);
     });
 
     //0715544604
@@ -136,7 +133,7 @@ const Home = () => {
     // Push data to Firebase with a unique ID
     push(HistoryRef, History)
       .then((newRef) => {
-        console.log("Data added with ID: ", newRef.key);
+        // console.log("Data added with ID: ", newRef.key);
         // Reset states after data is sent
         // setFouls(0);
         // setTotal(0);
@@ -184,11 +181,23 @@ const Home = () => {
           <View style={styles.EnveBox}>
             <View style={styles.SensorBox1}>
               <FontAwesome6 name="temperature-half" size={19} color="#515151" />
-              <Text style={styles.SensorText}>{Temperature}ºC</Text>
+              {loading ? (
+                <ActivityIndicator size="small" color="#515151" />
+              ) : (
+                <>
+                  <Text style={styles.SensorText}>{Temperature}ºC</Text>
+                </>
+              )}
             </View>
             <View style={styles.SensorBox1}>
               <Entypo name="water" size={19} color="#515151" />
-              <Text style={styles.SensorText}>{Humidity}%</Text>
+              {loading ? (
+                <ActivityIndicator size="small" color="#515151" />
+              ) : (
+                <>
+                  <Text style={styles.SensorText}>{Humidity}%</Text>
+                </>
+              )}
             </View>
           </View>
         </View>
@@ -209,11 +218,23 @@ const Home = () => {
             <View style={{ flex: 1, alignItems: "center" }}>
               <Text style={styles.PointText1}>TEAM 1</Text>
               <View style={styles.PointBox1}>
-                <Text style={styles.PointTextNumber1}>{Total}</Text>
+                {loading ? (
+                  <ActivityIndicator size="medium" color="#fff" />
+                ) : (
+                  <>
+                    <Text style={styles.PointTextNumber1}>{Total}</Text>
+                  </>
+                )}
               </View>
               <Text style={styles.PointText2}>FOULS</Text>
               <View style={styles.PointBox2}>
-                <Text style={styles.PointTextNumber2}>{Fouls}</Text>
+                {loading ? (
+                  <ActivityIndicator size="medium" color="#fff" />
+                ) : (
+                  <>
+                    <Text style={styles.PointTextNumber2}>{Fouls}</Text>
+                  </>
+                )}
               </View>
             </View>
             {/* //        Right  */}
@@ -354,6 +375,7 @@ const styles = ScaledSheet.create({
   },
 
   box1: {
+    marginBottom: 15,
     marginTop: 10,
     width: "90%",
     height: "20%",
