@@ -92,7 +92,7 @@ const styles = ScaledSheet.create({
     marginTop: 10,
     marginBottom: 10,
     width: "280@vs",
-    height: 200,
+    height: "200@mvs0.4",
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",

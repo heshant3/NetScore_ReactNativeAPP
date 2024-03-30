@@ -210,7 +210,7 @@ const Home = () => {
           {/* ///    Left  */}
           <View
             style={{
-              flex: 0.9,
+              flex: 1,
               flexDirection: "row",
               paddingTop: 20,
             }}
@@ -273,19 +273,6 @@ const Home = () => {
             {timerActive2 ? "Reset" : "Start"}
           </Text>
         </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          style={[
-            styles.box3,
-            Total < 1 && minutes < 1 && seconds < 1
-              ? styles.disabledButton
-              : null,
-          ]}
-          onPress={handleOkPress}
-          // disabled={minutes > 0 && seconds > 0}
-        >
-          <Text style={styles.ResetText}>Update</Text>
-        </TouchableOpacity> */}
       </View>
 
       {/* Set Timer Modal */}
@@ -393,7 +380,7 @@ const styles = ScaledSheet.create({
   },
 
   SensorBox1: {
-    width: "25%",
+    width: "30%",
     height: "88%",
     borderRadius: 10,
     backgroundColor: "#fff",
@@ -403,7 +390,7 @@ const styles = ScaledSheet.create({
 
   SensorText: {
     padding: 10,
-    fontSize: "20@mvs",
+    fontSize: "18@mvs",
     fontFamily: "Inter_600SemiBold",
     color: "#595959",
   },
@@ -424,8 +411,8 @@ const styles = ScaledSheet.create({
   },
 
   clock: {
-    width: "50%",
-    height: "15%",
+    width: "70%",
+    height: "16%",
     backgroundColor: "#FC4E4E",
     borderRadius: 10,
     justifyContent: "center",
@@ -434,7 +421,7 @@ const styles = ScaledSheet.create({
   },
 
   clockText: {
-    fontSize: "50@mvs",
+    fontSize: "45@mvs",
     fontFamily: "Inter_600SemiBold",
     color: "#fff",
   },
@@ -457,7 +444,7 @@ const styles = ScaledSheet.create({
   },
 
   PointTextNumber1: {
-    fontSize: "50@mvs",
+    fontSize: "45@mvs",
     fontFamily: "Inter_600SemiBold",
     color: "#fff",
   },
@@ -481,7 +468,7 @@ const styles = ScaledSheet.create({
   },
 
   PointTextNumber2: {
-    fontSize: "40@mvs",
+    fontSize: "35@mvs",
     fontFamily: "Inter_600SemiBold",
     color: "#fff",
   },
@@ -494,7 +481,8 @@ const styles = ScaledSheet.create({
   },
 
   ShotClockHeadText: {
-    marginVertical: 10,
+    marginTop: 20,
+
     // marginBottom: 10,
     fontSize: "14@mvs",
     fontFamily: "Inter_600SemiBold",
@@ -509,6 +497,7 @@ const styles = ScaledSheet.create({
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
+    marginTop: 10,
   },
 
   ShotClockText: {
@@ -518,7 +507,7 @@ const styles = ScaledSheet.create({
   },
 
   box3: {
-    marginTop: 10,
+    marginTop: 30,
     width: "40%",
     height: "6%",
     backgroundColor: "#fff",
